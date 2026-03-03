@@ -3,7 +3,7 @@ import LandingPage from "./pages/LandingPage";
 import { Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./dashboard/dashboard";
+import Dashboard from "./dashboard/Dashboard";
 import ProtectedRoute from "./libs/ProtectedRoute";
 import DashboardHome from "./dashboard/DashboardHome";
 import Explore from "./dashboard/Explore";
