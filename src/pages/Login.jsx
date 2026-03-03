@@ -17,12 +17,16 @@ const Login = () => {
 
   useEffect(() => {
     // only redirect after auth context finishes loading
-    if (user && !loading && role ) {
-      console.log("user detected in Login, redirecting to dashboard", user);
+    if(user){
+      console.log("user detected in Login, redirecting to dashboard", user)
+    }
+    // require: user present, auth context not loading, role resolved, and local request not loading
+    if (user && !loading && role && !isloading) {
       navigate("/dashboard", { replace: true });
       toast.success("Login Successful");
     }
-  }, [user, navigate, loading, role]);
+    console.log("Loading state :" , isloading , "Authstate : " , loading)
+  }, [user, navigate, loading, role , isloading]);
 
   const handleSignin = async () => {
     setIsLoading(true);

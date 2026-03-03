@@ -3,8 +3,11 @@ import Header from '../components/Header'
 import { FaArrowRight } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import PropertyCard from '../components/PropertyCard'
+import { UseAuth } from '../context/AuthContext'
 
 const DashboardHome = () => {
+  const { user } = UseAuth();
+  const userName = user?.user_metadata?.full_name || "User";
   const properties = [
     {
       t: 'Apartment for sale' ,
@@ -12,7 +15,7 @@ const DashboardHome = () => {
       rent : false ,
       place : 'Mile 4 Nkwen' , 
       amenities : ['electricity ' , 'parking'] ,
-      uri : '../src/img/house12.jpg',
+      uri : '../src/images/house12.jpg',
     },
     {
       t: 'Apartment for sale' ,
@@ -20,7 +23,7 @@ const DashboardHome = () => {
       rent : false ,
       place : 'Mile 4 Nkwen' , 
       amenities : ['electricity ' , 'parking'] ,
-      uri : '../src/img/house12.jpg',
+      uri : '../src/images/house12.jpg',
     },
     {
       t: 'Apartment for sale' ,
@@ -28,7 +31,7 @@ const DashboardHome = () => {
       rent : false ,
       place : 'Mile 4 Nkwen' , 
       amenities : ['electricity ' , 'parking'] ,
-      uri : '../src/img/house12.jpg',
+      uri : '../src/images/house12.jpg',
     },
     {
       t: 'Apartment for sale' ,
@@ -36,7 +39,7 @@ const DashboardHome = () => {
       rent : false ,
       place : 'Mile 4 Nkwen' , 
       amenities : ['electricity ' , 'parking'] ,
-      uri : '../src/img/house12.jpg',
+      uri : '../src/images/house12.jpg',
     },
     {
       t: 'Apartment for sale' ,
@@ -44,7 +47,7 @@ const DashboardHome = () => {
       rent : false ,
       place : 'Mile 4 Nkwen' , 
       amenities : ['electricity ' , 'parking'] ,
-      uri : '../src/img/house12.jpg',
+      uri : '../src/images/house12.jpg',
     },
   ]
 
@@ -66,7 +69,7 @@ const DashboardHome = () => {
     <div>
       <Header />
       <h1 className='font-bold text-4xl my-10 capitalize text-violet-500'>
-        Welcome back , user !
+        Welcome back , {userName} !
       </h1>
       <h2 className='font-extralight text-2xl text-gray-700'>
         Find your next home today
