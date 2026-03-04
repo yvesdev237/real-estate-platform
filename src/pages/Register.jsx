@@ -3,6 +3,7 @@ import { FaUser, FaHome, FaMailBulk, FaPhone, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { db } from "../libs/database";
+import { TailSpin, ThreeDots } from "react-loader-spinner";
 
 const Register = () => {
   const [role, setRole] = useState("tenant");
@@ -61,7 +62,7 @@ const Register = () => {
         }
 
         toast.success("Account succefully created !");
-        navigate("/login");
+        navigate("/");
       }
     } catch (error) {
       toast.error(error);
@@ -186,9 +187,9 @@ const Register = () => {
         <button
           onClick={handleRegister}
           disabled={loading}
-          className="cursor-pointer rounded-2xl bg-violet-800 text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-96 font-medium"
+          className="cursor-pointer rounded-2xl bg-violet-800 flex justify-center items-center text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-96 font-medium"
         >
-          {loading ? "Processing" : "Sign Up"}
+          {loading ? <TailSpin height={25} color="white"/> :"sign up"}
         </button>
         <p className="text-md text-center mt-2">
           Already have an account ?{" "}

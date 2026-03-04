@@ -23,7 +23,7 @@ const Login = () => {
     // require: user present, auth context not loading, role resolved, and local request not loading
     if (user && !loading && role && !isloading) {
       navigate("/dashboard", { replace: true });
-      toast.success("Login Successful");
+      toast.success("Welcome back ! ");
     }
     console.log("Loading state :" , isloading , "Authstate : " , loading)
   }, [user, navigate, loading, role , isloading]);
@@ -96,9 +96,9 @@ const Login = () => {
           <button
             onClick={handleSignin}
             disabled={isloading}
-            className={`cursor-pointer ${isloading ? 'opacity-50 cursor-not-allowed' : ''} rounded-2xl bg-violet-800 text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-96 font-medium`}
+            className={`cursor-pointer ${isloading ? 'opacity-50 cursor-not-allowed' : ''} rounded-2xl bg-violet-800 text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-96 font-medium flex justify-center items-center`}
           >
-            {isloading ? 'Processing....' : 'Sign In'}
+            {isloading ? <TailSpin height={25}/> : 'Sign In'}
           </button>
           <p className="text-md text-center mt-2">
             Don't have an account ?{" "}

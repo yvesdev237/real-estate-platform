@@ -7,7 +7,7 @@ import { UseAuth } from '../context/AuthContext'
 
 const DashboardHome = () => {
   const { user } = UseAuth();
-  const userName = user?.user_metadata?.full_name || "User";
+  const userName = user?.user_metadata?.full_name.split(" ")[0] || "User";
   const properties = [
     {
       t: 'Apartment for sale' ,
@@ -71,14 +71,14 @@ const DashboardHome = () => {
       <h1 className='font-bold text-4xl my-10 capitalize text-violet-500'>
         Welcome back , {userName} !
       </h1>
-      <h2 className='font-extralight text-2xl text-gray-700'>
+      {user.user_metadata?.role === "tenant" && <h2 className='font-extralight text-2xl text-gray-700'>
         Find your next home today
-      </h2>
+      </h2>}
       <button onClick={() => navigate('explore')} className=' mt-2 bg-blue-700 rounded-3xl hover:bg-blue-500 text-center flex gap-2 items-center cursor-pointer p-3 text-2xl shadow-2xl text-white'>
         Explore properties
         <FaArrowRight className=' transition-transform duration-300 transform:translate-x-2'/>
       </button>
-      <section>
+      {user.user_metadata?.role === "tenant" && (<section>
         <h1 className='font-semibold text-4xl text-blue-700 capitalize mt-8'>recommended for you</h1>
         <div ref={scrollRef} className='overflow-x-auto no-scrollbar snap-x snap-mandatory gap-4 py-4 flex scroll-smooth px-2'>
         {properties.map((item , index) => (
@@ -87,7 +87,7 @@ const DashboardHome = () => {
           </div>
         ))}
         </div>
-      </section>
+      </section>)}
     </div>
   )
 }

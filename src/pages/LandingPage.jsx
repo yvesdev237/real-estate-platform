@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { UseAuth } from "../context/AuthContext";
+import { RevolvingDot } from "react-loader-spinner";
 
 const LandingPage = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { loading, user, role } = UseAuth();
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!loading && user && role) {
+        navigate("/dashboard", { replace: true });
+    }
+    }, 5000);
+  }, [loading, user, role, navigate]);
+
+  if (!loading&&user) return <div className="h-screen p-3 text-center w-full flex items-center justify-center font-extralight flex-col space-y-10 text-2xl ">Hey , <span className="text-violet-700 font-extralight capitalize ">{user ? user.user_metadata?.full_name : ''}</span> Hope you're doing great today! <br/> Let's redirect you to your account! <div className="my-10 "><RevolvingDot color="blue"/></div> </div>
   return (
     <div className="relative p-3 m-0 flex flex-col justify-between h-screen w-full bg-[url(../src/images/house10.jpg)]">
       <div className="flex flex-col space-y-2 mt-7 w-full justify-around items-start">

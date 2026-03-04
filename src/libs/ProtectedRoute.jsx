@@ -8,12 +8,12 @@ const ProtectedRoute = ({children }) => {
     console.log("ProtectedRoute status", { user, loading , role });
       if(loading) return <div className="h-screen flex justify-center items-center w-full">
     <TailSpin />
-  </div>
+  </div>;
     // require both an authenticated user and a known role
-    if (!user || !role) {
+    if (!user && !role) {
         toast.error('Unauthorized user');
-        return <Navigate to="/login" />};
-
+        return <Navigate to="/login" />;
+    };
     return children ;
 }
 
