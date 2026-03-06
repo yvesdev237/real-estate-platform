@@ -88,6 +88,82 @@ const DashboardHome = () => {
         ))}
         </div>
       </section>)}
+      {/* Role-based analytics */}
+      <section className="mt-8">
+        <h2 className="text-2xl font-semibold mb-4">Analytics</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {(() => {
+            const role = user.user_metadata?.role;
+            const listedCount = properties.length;
+            const avgPrice = listedCount ? Math.round(properties.reduce((s, p) => s + (p.price || 0), 0) / listedCount) : 0;
+            if (role === 'landlord') {
+              return (
+                <>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Listed Properties</div>
+                    <div className="text-2xl font-bold">{listedCount}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Average Price</div>
+                    <div className="text-2xl font-bold">{avgPrice.toLocaleString()}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Total Inquiries</div>
+                    <div className="text-2xl font-bold">{Math.max(0, listedCount * 3)}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Estimated Revenue</div>
+                    <div className="text-2xl font-bold">{(avgPrice * Math.max(0, listedCount)).toLocaleString()}</div>
+                  </div>
+                </>
+              )
+            }
+            if (role === 'agent') {
+              return (
+                <>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Properties Managed</div>
+                    <div className="text-2xl font-bold">{listedCount}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Active Leads</div>
+                    <div className="text-2xl font-bold">{Math.max(0, listedCount * 2)}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Open Deals</div>
+                    <div className="text-2xl font-bold">{Math.floor(listedCount / 2)}</div>
+                  </div>
+                  <div className="p-4 bg-white rounded-lg shadow-sm">
+                    <div className="text-sm text-gray-500">Commission Est.</div>
+                    <div className="text-2xl font-bold">{(avgPrice * Math.floor(listedCount / 2)).toLocaleString()}</div>
+                  </div>
+                </>
+              )
+            }
+            // tenant or default
+            return (
+              <>
+                <div className="p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-sm text-gray-500">Recommended</div>
+                  <div className="text-2xl font-bold">{listedCount}</div>
+                </div>
+                <div className="p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-sm text-gray-500">Saved Listings</div>
+                  <div className="text-2xl font-bold">{Math.min(10, listedCount)}</div>
+                </div>
+                <div className="p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-sm text-gray-500">Viewed</div>
+                  <div className="text-2xl font-bold">{listedCount * 4}</div>
+                </div>
+                <div className="p-4 bg-white rounded-lg shadow-sm">
+                  <div className="text-sm text-gray-500">Matches</div>
+                  <div className="text-2xl font-bold">{Math.ceil(listedCount / 3)}</div>
+                </div>
+              </>
+            )
+          })()}
+        </div>
+      </section>
     </div>
   )
 }

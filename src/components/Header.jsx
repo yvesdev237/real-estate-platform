@@ -9,7 +9,7 @@ const Header = () => {
         <img src={logo} alt="logo" className='w-30 h-25'/>
       </div>
       <div className='bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center'>
-        <FaBell className='w-8 h-8 '/>
+        <FaBell className='w-5 h-5' />
       </div>
     </div>
   )

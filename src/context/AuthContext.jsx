@@ -57,6 +57,7 @@ export default function AuthProvider({ children }) {
             }
           } catch (e) {
             // ignore – we already warned above
+            console.warn(e)
           }
         }
 
