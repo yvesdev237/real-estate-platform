@@ -14,7 +14,7 @@ import AddProperty from "./dashboard/AddProperty";
 
 const App = () => {
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center min-h-screen w-full bg-gradient-to-r from-violet-50/10 to-transparent">
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
