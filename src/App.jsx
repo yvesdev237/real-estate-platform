@@ -10,7 +10,10 @@ import Explore from "./dashboard/Explore";
 import Favorites from "./dashboard/Favorites";
 import Profile from "./dashboard/Profile";
 import Properties from "./dashboard/Properties";
+import Listings from "./dashboard/Listings";
+import Clients from "./dashboard/Clients";
 import AddProperty from "./dashboard/AddProperty";
+import PropertyDetail from "./dashboard/PropertyDetail";
 
 const App = () => {
   return (
@@ -30,6 +33,9 @@ const App = () => {
           <Route index element = {<DashboardHome />}/>
           <Route path="explore" element = {<Explore />}/>
           <Route path="properties" element = {<Properties />}/>
+          <Route path="properties/:id" element={<PropertyDetail />} />
+          <Route path="listings" element={<Listings />} />
+          <Route path="clients" element={<Clients />} />
           <Route path="favorites" element = {<Favorites />}/>
           <Route path="add" element = {<AddProperty />}/>
           <Route path="profile" element = {<Profile />}/>

@@ -42,71 +42,151 @@ const Profile = () => {
     }
   }
 
+  const role = (meta.role || 'Tenant').toLowerCase()
+  const isAgent = role === 'agent'
+  const isLandlord = role === 'landlord'
+
+  const activityItems = isAgent
+    ? [
+        { label: 'Managed properties', value: 12 },
+        { label: 'Clients contacted', value: 34 },
+        { label: 'Deals closed', value: 8 },
+      ]
+    : isLandlord
+    ? [
+        { label: 'Properties listed', value: 5 },
+        { label: 'Total views', value: 612 },
+        { label: 'Messages from tenants', value: 4 },
+      ]
+    : [
+        { label: 'Saved properties', value: 3 },
+        { label: 'Recently viewed homes', value: 24 },
+        { label: 'Rental requests sent', value: 2 },
+      ]
+
   return (
-    <div>
+    <div className="min-h-screen bg-slate-50">
       <Header />
 
-      <main className="max-w-6xl mx-auto p-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <aside className="lg:w-1/3 bg-white rounded-lg p-6 shadow-sm flex flex-col items-center text-center">
-            <img src={meta.avatar_url || '../images/zil.jpg'} alt="avatar" className="w-28 h-28 rounded-full object-cover mb-4" />
-            <h2 className="text-xl font-semibold">{meta.full_name || 'Your name'}</h2>
-            <p className="text-sm text-gray-500">{user?.email}</p>
-            <div className="mt-6 w-full">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div className="p-3 bg-gray-50 rounded">
-                  <div className="text-xs text-gray-500">Role</div>
-                  <div className="font-medium">{meta.role || 'Tenant'}</div>
+      <main className="max-w-5xl mx-auto p-6">
+        <div className="grid gap-6">
+          {/* Profile card */}
+          <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="flex-shrink-0">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center text-white text-3xl font-semibold">
+                  {meta.full_name ? meta.full_name.charAt(0) : 'Z'}
                 </div>
-                <div className="p-3 bg-gray-50 rounded">
-                  <div className="text-xs text-gray-500">Member since</div>
-                  <div className="font-medium">{new Date(user?.created_at || Date.now()).toLocaleDateString()}</div>
+              </div>
+
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl font-semibold">{meta.full_name || 'Your name'}</h1>
+                    <p className="text-sm text-gray-500">{meta.role || 'Tenant'}</p>
+                  </div>
+
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+                  >
+                    Logout
+                  </button>
                 </div>
+
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="text-xs text-gray-400">Email</div>
+                    <div className="font-medium">{user?.email || '—'}</div>
+                  </div>
+                  <div className="rounded-lg bg-slate-50 p-4">
+                    <div className="text-xs text-gray-400">Member since</div>
+                    <div className="font-medium">{new Date(user?.created_at || Date.now()).toLocaleDateString()}</div>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSave} className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Full name</label>
+                    <input
+                      className="w-full rounded border border-slate-200 bg-white px-3 py-2 focus:border-violet-500 focus:outline-none"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">Phone</label>
+                    <input
+                      className="w-full rounded border border-slate-200 bg-white px-3 py-2 focus:border-violet-500 focus:outline-none"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className="sm:col-span-2 flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="inline-flex items-center justify-center rounded-md bg-violet-700 px-4 py-2 text-sm font-medium text-white hover:bg-violet-800 disabled:opacity-50"
+                    >
+                      {saving ? 'Saving…' : 'Save changes'}
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-            <button onClick={handleLogout} className="mt-6 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700">Logout</button>
-          </aside>
-
-          <section className="lg:w-2/3 bg-white rounded-lg p-6 shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Profile</h3>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Full name</label>
-                <input className="w-full p-2 border rounded" value={name} onChange={e => setName(e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
-                <input className="w-full p-2 border rounded bg-gray-50" value={user?.email || ''} readOnly />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Phone</label>
-                <input className="w-full p-2 border rounded" value={phone} onChange={e => setPhone(e.target.value)} />
-              </div>
-              <div className="flex justify-end">
-                <button type="submit" disabled={saving} className="bg-violet-700 text-white px-4 py-2 rounded hover:bg-violet-800">
-                  {saving ? 'Saving...' : 'Save changes'}
-                </button>
-              </div>
-            </form>
           </section>
-        </div>
 
-        <div className="mt-8">
-          <h4 className="text-lg font-semibold mb-3">Account activity</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-4 bg-white rounded shadow-sm">
-              <div className="text-sm text-gray-500">Properties saved</div>
-              <div className="text-2xl font-bold">3</div>
+          {/* Activity + Verification */}
+          <section className="grid gap-6 md:grid-cols-2">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h2 className="text-lg font-semibold">Notifications</h2>
+              <div className="mt-4 space-y-3 text-sm text-slate-600">
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <div className="font-medium">New message from support</div>
+                  <div className="text-xs text-gray-500">2 hours ago</div>
+                </div>
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <div className="font-medium">Property inquiry received</div>
+                  <div className="text-xs text-gray-500">Yesterday</div>
+                </div>
+                <div className="rounded-lg bg-slate-50 p-3">
+                  <div className="font-medium">Weekly summary is ready</div>
+                  <div className="text-xs text-gray-500">3 days ago</div>
+                </div>
+              </div>
             </div>
-            <div className="p-4 bg-white rounded shadow-sm">
-              <div className="text-sm text-gray-500">Recent views</div>
-              <div className="text-2xl font-bold">24</div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <h2 className="text-lg font-semibold">Activity</h2>
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {activityItems.map((item) => (
+                  <div key={item.label} className="rounded-lg bg-slate-50 p-4 text-center">
+                    <div className="text-xs text-gray-400">{item.label}</div>
+                    <div className="mt-2 text-2xl font-bold">{item.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {(isAgent || isLandlord) && (
+                <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="h-9 w-9 rounded-full bg-amber-200 flex items-center justify-center text-amber-700">✓</div>
+                    <div>
+                      <div className="text-sm font-semibold">Account verification</div>
+                      <p className="text-sm text-slate-600">Verified accounts get better matchmaking and trust from clients.</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="text-sm text-slate-600">Status: <span className="font-medium text-slate-800">Verified</span></div>
+                    <button className="inline-flex items-center justify-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">
+                      View verification details
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="p-4 bg-white rounded shadow-sm">
-              <div className="text-sm text-gray-500">Messages</div>
-              <div className="text-2xl font-bold">2</div>
-            </div>
-          </div>
+          </section>
         </div>
       </main>
 

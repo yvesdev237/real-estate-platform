@@ -192,13 +192,13 @@ const Register = () => {
             <button
               onClick={handleRegister}
               disabled={loading}
-              className="cursor-pointer rounded-2xl bg-violet-800 flex justify-center items-center text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-full font-medium"
+              className="cursor-pointer rounded-2xl bg-blue-800 flex justify-center items-center text-white text-sm hover:bg-blue-900 hover:scale-105 hover:ease transition-all p-2 w-full font-medium"
             >
               {loading ? <TailSpin height={25} color="white"/> : "sign up"}
             </button>
             <p className="text-md text-center mt-2">
               Already have an account ? {" "}
-              <Link className="underline text-violet-500 font-medium" to={`/login`}>
+              <Link className="underline text-blue-800 font-medium" to={`/login`}>
                 Sign In
               </Link>
             </p>

@@ -56,7 +56,7 @@ const Login = () => {
             className="w-48 h-48 rounded-full mb-6"
           />
           <p className="text-xl font-medium text-blue-800 text-center lg:text-left">
-            Hey, welcome back — good to see you.
+            Hey, welcome back good to see you.
           </p>
         </aside>
 
@@ -90,7 +90,7 @@ const Login = () => {
                 />
               </div>
               <p className="text-md text-right mt-2">
-                <Link className="underline text-violet-500 font-medium" to={'/'}>
+                <Link className="underline text-blue-900 font-medium" to={'/'}>
                   Forgot Password ?
                 </Link>
               </p>
@@ -98,14 +98,14 @@ const Login = () => {
             <button
               onClick={handleSignin}
               disabled={isloading}
-              className={`cursor-pointer ${isloading ? 'opacity-50 cursor-not-allowed' : ''} rounded-2xl bg-violet-800 text-white text-sm hover:bg-violet-900 hover:scale-105 hover:ease transition-all p-2 w-full font-medium flex justify-center items-center`}
+              className={`cursor-pointer ${isloading ? 'opacity-50 cursor-not-allowed' : ''} rounded-2xl bg-blue-800 text-white text-sm hover:bg-blue-900 hover:scale-105 hover:ease transition-all p-2 w-full font-medium flex justify-center items-center`}
             >
               {isloading ? <TailSpin height={25}/> : 'Sign In'}
             </button>
             <p className="text-md text-center mt-2">
               Don't have an account ?{' '}
               <Link
-                className="underline text-violet-500 font-medium"
+                className="underline text-blue-800 font-medium"
                 to={'/register'}
               >
                 Sign Up
