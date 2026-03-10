@@ -1,30 +1,46 @@
-import React, { useState, useMemo } from 'react'
-import Header from '../components/Header'
+import React, { useState, useMemo, useEffect } from 'react'
 import PropertyCard from '../components/PropertyCard'
-
-const sample = [
-  { price: 12000000, rent: false, place: 'Mile 4 Nkwen', amenities: ['electricity','parking'], uri: '../images/house12.jpg', t: 'Spacious 4BR Home' },
-  { price: 6000000, rent: true, place: 'Buea', amenities: ['water','parking'], uri: '../images/house3.jpg', t: 'Modern 2BR' },
-  { price: 8500000, rent: false, place: 'Limbe', amenities: ['electricity','garden'], uri: '../images/house1.jpg', t: 'Beachside Bungalow' },
-  { price: 3000000, rent: true, place: 'Mokolo', amenities: ['parking'], uri: '../images/entry.jpg', t: 'Studio Apartment' },
-]
+import { UseAuth } from '../context/AuthContext'
+import { fetchProperties } from '../libs/propertyService'
 
 const Properties = () => {
+  const { user } = UseAuth()
+  const [properties, setProperties] = useState([])
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('all')
 
+  useEffect(() => {
+    let mounted = true
+
+    fetchProperties({ ownerId: user?.id })
+      .then((data) => {
+        if (!mounted) return
+        setProperties(data)
+      })
+      .catch((err) => {
+        console.error('Failed to load properties', err)
+      })
+      .finally(() => {
+        if (mounted) setLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [user])
+
   const filtered = useMemo(() => {
-    return sample.filter(p => {
+    return properties.filter(p => {
       if (filter === 'rent' && !p.rent) return false
       if (filter === 'sale' && p.rent) return false
       if (!query) return true
       return p.t.toLowerCase().includes(query.toLowerCase()) || p.place.toLowerCase().includes(query.toLowerCase())
     })
-  }, [query, filter])
+  }, [properties, query, filter])
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-10">
         <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
@@ -90,23 +106,26 @@ const Properties = () => {
           </div>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((p, i) => (
-            <PropertyCard
-              key={i}
-              propImage={p.uri}
-              amenities={p.amenities}
-              propTitle={p.t}
-              price={p.price}
-              isForRent={p.rent}
-              located={p.place}
-              landlord={p.landlord}
-              id={String(i)}
-            />
-          ))}
-        </div>
-
-        {filtered.length === 0 && (
+        {loading ? (
+          <div className="py-20 text-center text-slate-500">Loading your properties…</div>
+        ) : filtered.length ? (
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((p, i) => (
+              <PropertyCard
+                key={p.id ?? i}
+                propImage={p.uri}
+                amenities={p.amenities}
+                propTitle={p.t}
+                price={p.price}
+                isForRent={p.rent}
+                located={p.place}
+                landlord={p.landlord}
+                landlordRole={p.landlordRole}
+                id={p.id ?? String(i)}
+              />
+            ))}
+          </div>
+        ) : (
           <div className="mt-12 rounded-2xl bg-white px-8 py-10 shadow-sm border border-slate-200 text-center">
             <h3 className="text-xl font-semibold text-slate-900">No properties found</h3>
             <p className="mt-2 text-sm text-slate-500">Try adjusting your search or filters to discover more listings.</p>

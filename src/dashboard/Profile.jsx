@@ -5,6 +5,7 @@ import { UseAuth } from '../context/AuthContext'
 import { db } from '../libs/database'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
+import { TailSpin } from 'react-loader-spinner'
 
 const Profile = () => {
   const { user } = UseAuth()
@@ -12,6 +13,7 @@ const Profile = () => {
   const [name, setName] = useState(meta.full_name || '')
   const [phone, setPhone] = useState(meta.phone || '')
   const [saving, setSaving] = useState(false)
+  const [isLoading , setIsLoading] = useState(false)
 
   useEffect(() => {
     setName(meta.full_name || '')
@@ -32,6 +34,7 @@ const Profile = () => {
 
   const navigate = useNavigate()
   const handleLogout = async () => {
+    setIsLoading(true)
     try {
       await db.auth.signOut()
       toast.success('Logged out')
@@ -39,8 +42,11 @@ const Profile = () => {
     } catch (err) {
       console.error('Logout failed', err)
       toast.error('Logout failed')
+    }finally {
+      setIsLoading(false)
     }
   }
+
 
   const role = (meta.role || 'Tenant').toLowerCase()
   const isAgent = role === 'agent'
@@ -66,15 +72,14 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
 
       <main className="max-w-5xl mx-auto p-6">
         <div className="grid gap-6">
           {/* Profile card */}
           <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="flex-shrink-0">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 flex items-center justify-center text-white text-3xl font-semibold">
+              <div className="shrink-0">
+                <div className="w-24 h-24 rounded-full bg-linear-to-tr from-violet-500 to-indigo-500 flex items-center justify-center text-white text-3xl font-semibold">
                   {meta.full_name ? meta.full_name.charAt(0) : 'Z'}
                 </div>
               </div>
@@ -88,9 +93,10 @@ const Profile = () => {
 
                   <button
                     onClick={handleLogout}
+                    disabled={isLoading}
                     className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
                   >
-                    Logout
+                    {isLoading ? <TailSpin height={25} /> : 'Logout'}
                   </button>
                 </div>
 
@@ -178,7 +184,7 @@ const Profile = () => {
                   </div>
 
                   <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div className="text-sm text-slate-600">Status: <span className="font-medium text-slate-800">Verified</span></div>
+                    <div className="text-sm text-slate-600">Status: <span className="font-medium text-green-800">Verified</span></div>
                     <button className="inline-flex items-center justify-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700">
                       View verification details
                     </button>

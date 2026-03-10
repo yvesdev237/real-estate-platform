@@ -48,17 +48,25 @@ const Register = () => {
       if (error) {
         toast.error(error.message);
       } else {
-        // create a corresponding profile row so fetchProfile can read it later
+        // The Supabase auth hook (in the DB) already creates a profile row
+        // for new users. To avoid creating a duplicate row, we upsert instead.
+        // That way if the trigger already created it, we just update it.
         const userId = authData.user?.id;
         if (userId) {
-          const { error: profileError } = await db.from("profiles").insert({
-            user_id: userId,
-            full_name: name,
-            role,
-            phone,
-          });
+          const { error: profileError } = await db
+            .from("profiles")
+            .upsert(
+              {
+                user_id: userId,
+                full_name: name,
+                role,
+                phone,
+              },
+              { onConflict: "user_id" }
+            );
+
           if (profileError) {
-            console.warn("failed to insert profile row", profileError);
+            console.warn("failed to upsert profile row", profileError);
           }
         }
 

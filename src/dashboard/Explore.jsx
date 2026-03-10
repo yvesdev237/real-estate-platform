@@ -1,18 +1,14 @@
-import React, { useState, useMemo } from 'react'
-import { FaSearch, FaMapMarkerAlt, FaFilter } from 'react-icons/fa'
+import React, { useState, useEffect, useMemo } from 'react'
+import { FaSearch } from 'react-icons/fa'
 import Header from '../components/Header'
 import PropertyCard from '../components/PropertyCard'
 import Footer from '../components/Footer'
-
-const sample = [
-  { price: 12000000, rent: false, place: 'Mile 4 Nkwen', amenities: ['electricity','parking'], uri: '../images/house12.jpg', t: 'Spacious 4BR Home' },
-  { price: 6000000, rent: true, place: 'Buea', amenities: ['water','parking'], uri: '../images/house3.jpg', t: 'Modern 2BR' },
-  { price: 8500000, rent: false, place: 'Limbe', amenities: ['electricity','garden'], uri: '../images/house1.jpg', t: 'Beachside Bungalow' },
-  { price: 3000000, rent: true, place: 'Mokolo', amenities: ['parking'], uri: '../images/entry.jpg', t: 'Studio Apartment' },
-  { price: 4500000, rent: true, place: 'Buea', amenities: ['water','parking'], uri: '../images/house2.jpg', t: '1BR Apartment' },
-]
+import toast from 'react-hot-toast'
+import { fetchProperties } from '../libs/propertyService'
 
 const Explore = () => {
+  const [properties, setProperties] = useState([])
+  const [loading, setLoading] = useState(true)
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState('all')
   const [sort, setSort] = useState('latest')
@@ -20,14 +16,35 @@ const Explore = () => {
   const [maxPrice, setMaxPrice] = useState('')
   const [selectedAmenities, setSelectedAmenities] = useState([])
 
-  const amenitiesList = ['parking','electricity','water','garden']
+  useEffect(() => {
+    let mounted = true
+
+    fetchProperties()
+      .then((data) => {
+        if (!mounted) return
+        setProperties(data)
+      })
+      .catch((err) => {
+        console.error('Failed to load properties', err)
+        toast.error('Failed to load properties from the database.')
+      })
+      .finally(() => {
+        if (mounted) setLoading(false)
+      })
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const amenitiesList = ['parking','electricity','water','garden','washer ' , 'balcony']
 
   const toggleAmenity = (a) => {
     setSelectedAmenities(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a])
   }
 
   const results = useMemo(() => {
-    let list = sample.slice()
+    let list = properties.slice()
     if (filter === 'rent') list = list.filter(p => p.rent)
     if (filter === 'sale') list = list.filter(p => !p.rent)
     if (query) {
@@ -42,13 +59,12 @@ const Explore = () => {
     if (sort === 'price-asc') list.sort((a,b) => a.price - b.price)
     if (sort === 'price-desc') list.sort((a,b) => b.price - a.price)
     return list
-  }, [query, filter, sort, minPrice, maxPrice, selectedAmenities])
+  }, [properties, query, filter, sort, minPrice, maxPrice, selectedAmenities])
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
 
-      <header className="relative bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500">
+      <header className="relative bg-linear-to-br from-violet-600 via-indigo-600 to-cyan-500">
         <div className="absolute inset-0 opacity-30 bg-[url('../images/house12.jpg')] bg-cover bg-center" />
         <div className="relative max-w-7xl mx-auto px-4 py-20">
           <div className="max-w-2xl">
@@ -191,20 +207,30 @@ const Explore = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-              {results.map((p, i) => (
-                <PropertyCard
-                  key={i}
-                  propImage={p.uri}
-                  propTitle={p.t}
-                  price={p.price}
-                  isForRent={p.rent}
-                  located={p.place}
-                  amenities={p.amenities}
-                  id={String(i)}
-                />
-              ))}
-            </div>
+            {loading ? (
+              <div className="py-20 text-center text-slate-500">Loading properties…</div>
+            ) : results.length ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {results.map((p, i) => (
+                  <PropertyCard
+                    key={p.id ?? i}
+                    propImage={p.uri}
+                    propTitle={p.t}
+                    price={p.price}
+                    isForRent={p.rent}
+                    located={p.place}
+                    amenities={p.amenities}
+                    landlord={p.landlord}
+                    landlordRole={p.landlordRole}
+                    id={p.id ?? String(i)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="py-20 text-center text-slate-500">
+                No properties found. Try adjusting your filters.
+              </div>
+            )}
           </section>
         </div>
       </main>

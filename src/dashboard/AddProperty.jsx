@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Header from '../components/Header'
 import toast from 'react-hot-toast'
 import PropertyCard from '../components/PropertyCard'
+import { UseAuth } from '../context/AuthContext'
+import { CreateProp } from '../libs/propertyService'
 
 const AddProperty = () => {
+  const { user } = UseAuth()
+  const navigate = useNavigate()
+
   const [title, setTitle] = useState('')
   const [price, setPrice] = useState('')
   const [place, setPlace] = useState('')
   const [isRent, setIsRent] = useState(false)
   const [amenities, setAmenities] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const amenityOptions = [
     'WiFi', 'Parking', 'Pool', 'Gym', 'Balcony', 'Garden', 
@@ -23,37 +30,72 @@ const AddProperty = () => {
     )
   }
   const [image, setImage] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
   const [description, setDescription] = useState('')
   const [propertyType, setPropertyType] = useState('')
   const [bedrooms, setBedrooms] = useState('')
   const [bathrooms, setBathrooms] = useState('')
   const [landlord, setLandlord] = useState('')
 
+  useEffect(() => {
+    if (!user) return
+    const name = user.user_metadata?.full_name || user.email || ''
+    setLandlord(name)
+  }, [user])
+
   const handleImage = (e) => {
     const file = e.target.files[0]
-    if (file) setImage(URL.createObjectURL(file))
+
+    if (!file) return
+
+    setImageFile(file)
+    setImage(URL.createObjectURL(file))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // simple client-side validation
+
     if (!title || !price || !place || !landlord) {
       toast.error('Please fill required fields')
       return
     }
-    // In a real app we'd POST to backend here
-    console.log({ title, price, place, isRent, amenities, image, description, propertyType, bedrooms, bathrooms, landlord })
-    toast.success('Property added (demo)')
-    setTitle('')
-    setPrice('')
-    setPlace('')
-    setAmenities([])
-    setImage(null)
-    setDescription('')
-    setPropertyType('')
-    setBedrooms('')
-    setBathrooms('')
-    setLandlord('')
+
+    if (!user?.id) {
+      toast.error('You must be logged in to list a property.')
+      return
+    }
+
+    setLoading(true)
+
+    try {
+      const { error, err } = await CreateProp(
+        {
+          title,
+          price: Number(price),
+          status: isRent ? 'rent' : 'sale',
+          neighborhood: place,
+          amenities,
+          description,
+          type: propertyType,
+          bedrooms: bedrooms ? Number(bedrooms) : null,
+          bathrooms: bathrooms ? Number(bathrooms) : null,
+          owner_id: user.id,
+        },
+        imageFile
+      )
+
+      if (error || err) {
+        throw error || err
+      }
+
+      toast.success('Property listed successfully!')
+      navigate('/dashboard/properties')
+    } catch (err) {
+      console.error('Failed to create property', err)
+      toast.error('Unable to create property. Try again later.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -232,11 +274,16 @@ const AddProperty = () => {
               </div>
             </div>
 
-            <button 
+            <button
               onClick={handleSubmit}
-              className="w-full bg-violet-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-violet-700 transition-colors focus:ring-2 focus:ring-violet-500 focus:ring-offset-2"
+              disabled={loading}
+              className={`w-full py-3 px-6 rounded-lg font-medium transition-colors focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 ${
+                loading
+                  ? 'bg-violet-200 text-white cursor-not-allowed'
+                  : 'bg-violet-600 text-white hover:bg-violet-700'
+              }`}
             >
-              List Property
+              {loading ? 'Listing…' : 'List Property'}
             </button>
           </div>
 
@@ -269,19 +316,19 @@ const AddProperty = () => {
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Tips for a great listing</h2>
               <ul className="space-y-3 text-sm text-gray-600">
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                  <span className="shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-violet-600 text-xs font-bold">1</span>
                   </span>
                   Use high-quality photos that show your property in the best light.
                 </li>
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                  <span className="shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-violet-600 text-xs font-bold">2</span>
                   </span>
                   Be accurate with your pricing and include all relevant details.
                 </li>
                 <li className="flex items-start">
-                  <span className="flex-shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
+                  <span className="shrink-0 w-5 h-5 bg-violet-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
                     <span className="text-violet-600 text-xs font-bold">3</span>
                   </span>
                   Highlight key amenities and features that make your property stand out.

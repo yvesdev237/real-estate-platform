@@ -11,59 +11,91 @@ const DashboardHome = () => {
   const userName = user?.user_metadata?.full_name.split(" ")[0] || "User";
   const properties = [
     {
-      t: 'Apartment for sale' ,
-      price : 12000000 ,
-      rent : false ,
-      place : 'Mile 4 Nkwen' , 
-      amenities : ['electricity ' , 'parking'] ,
-      uri : house12,
+      t: 'Apartment for sale',
+      price: 12000000,
+      rent: false,
+      place: 'Mile 4 Nkwen',
+      amenities: ['electricity', 'parking'],
+      uri: house12,
+      landlord: 'Samuel',
+      landlordRole: 'Landlord',
     },
     {
-      t: 'Apartment for sale' ,
-      price : 12000000 ,
-      rent : false ,
-      place : 'Mile 4 Nkwen' , 
-      amenities : ['electricity ' , 'parking'] ,
-      uri : house12,
+      t: 'Apartment for sale',
+      price: 12000000,
+      rent: false,
+      place: 'Mile 4 Nkwen',
+      amenities: ['electricity', 'parking'],
+      uri: house12,
+      landlord: 'Julie',
+      landlordRole: 'Landlord',
     },
     {
-      t: 'Apartment for sale' ,
-      price : 12000000 ,
-      rent : false ,
-      place : 'Mile 4 Nkwen' , 
-      amenities : ['electricity ' , 'parking'] ,
-      uri : house12,
+      t: 'Apartment for sale',
+      price: 12000000,
+      rent: false,
+      place: 'Mile 4 Nkwen',
+      amenities: ['electricity', 'parking'],
+      uri: house12,
+      landlord: 'Eric',
+      landlordRole: 'Landlord',
     },
     {
-      t: 'Apartment for sale' ,
-      price : 12000000 ,
-      rent : false ,
-      place : 'Mile 4 Nkwen' , 
-      amenities : ['electricity ' , 'parking'] ,
-      uri : house12,
+      t: 'Apartment for sale',
+      price: 12000000,
+      rent: false,
+      place: 'Mile 4 Nkwen',
+      amenities: ['electricity', 'parking'],
+      uri: house12,
+      landlord: 'Amina',
+      landlordRole: 'Landlord',
     },
     {
-      t: 'Apartment for sale' ,
-      price : 12000000 ,
-      rent : false ,
-      place : 'Mile 4 Nkwen' , 
-      amenities : ['electricity ' , 'parking'] ,
-      uri : house12,
+      t: 'Apartment for sale',
+      price: 12000000,
+      rent: false,
+      place: 'Mile 4 Nkwen',
+      amenities: ['electricity', 'parking'],
+      uri: house12,
+      landlord: 'James',
+      landlordRole: 'Landlord',
     },
   ]
 
   const scrollRef = useRef(null)
   useEffect(() => {
-    const container = scrollRef.current;
-    const interval = setInterval(() => {
-      if (container) {
-        container.scrollLeft += 1;
-        if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
-          container.scrollLeft = 0;
-        }
+    const container = scrollRef.current
+    if (!container) return
+
+    // Only auto-scroll when the content overflows horizontally.
+    const canScroll = container.scrollWidth > container.clientWidth
+    if (!canScroll) return
+
+    let direction = 1
+    let animationFrame = null
+
+    const step = () => {
+      if (!container) return
+
+      const maxScroll = container.scrollWidth - container.clientWidth
+      const next = container.scrollLeft + direction
+
+      // Reverse direction when we hit either end.
+      if (next >= maxScroll) {
+        direction = -1
+      } else if (next <= 0) {
+        direction = 1
       }
-    }, 20);
-    return () => clearInterval(interval)
+
+      container.scrollLeft += direction
+      animationFrame = requestAnimationFrame(step)
+    }
+
+    animationFrame = requestAnimationFrame(step)
+
+    return () => {
+      if (animationFrame) cancelAnimationFrame(animationFrame)
+    }
   }, [])
   const navigate = useNavigate()
   return (
@@ -71,7 +103,7 @@ const DashboardHome = () => {
       <Header />
 
       <header className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500" />
+        <div className="absolute inset-0 bg-linear-to-br from-violet-600 via-indigo-600 to-cyan-500" />
         <div className="absolute inset-0 bg-[url('../images/house12.jpg')] bg-cover bg-center opacity-20" />
         <div className="relative max-w-6xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-10">
@@ -98,7 +130,7 @@ const DashboardHome = () => {
                   </>
                 ) : (
                   <button
-                    onClick={() => navigate('add-property')}
+                    onClick={() => navigate('/dashboard/add')}
                     className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-violet-700 shadow-md hover:bg-white/90 transition"
                   >
                     Add a new listing
@@ -151,7 +183,7 @@ const DashboardHome = () => {
 
             <div ref={scrollRef} className="mt-6 flex gap-5 overflow-x-auto scroll-smooth pb-4 no-scrollbar">
               {properties.map((item, index) => (
-                <div key={index} className="min-w-[22rem] shrink-0 snap-start">
+                <div key={index} className="min-w-88 shrink-0 snap-start">
                   <PropertyCard
                     id={index}
                     price={item.price}

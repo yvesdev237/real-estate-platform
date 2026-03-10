@@ -4,15 +4,14 @@ import PropertyCard from '../components/PropertyCard'
 
 const Favorites = () => {
   const favorites = [
-    { price: 8000000, rent: false, place: 'Buea', amenities: ['parking','electricity'], uri: '../images/house3.jpg', t: 'Cozy 3BR Townhouse' },
-    { price: 4500000, rent: true, place: 'Mile 4', amenities: ['water','parking'], uri: '../images/house2.jpg', t: '1BR Apartment' },
+    { price: 8000000, rent: false, place: 'Buea', amenities: ['parking','electricity'], uri: '../images/house3.jpg', t: 'Cozy 3BR Townhouse', landlord: 'Amina', landlordRole: 'Landlord' },
+    { price: 4500000, rent: true, place: 'Mile 4', amenities: ['water','parking'], uri: '../images/house2.jpg', t: '1BR Apartment', landlord: 'James', landlordRole: 'Landlord' },
   ]
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
 
-      <header className="relative bg-gradient-to-br from-violet-600 via-indigo-600 to-cyan-500">
+      <header className="relative bg-linear-to-br from-violet-600 via-indigo-600 to-cyan-500">
         <div className="absolute inset-0 opacity-25 bg-[url('../images/house12.jpg')] bg-cover bg-center" />
         <div className="relative max-w-6xl mx-auto px-4 py-16">
           <h1 className="text-4xl lg:text-5xl font-bold text-white">Saved homes</h1>
@@ -37,6 +36,8 @@ const Favorites = () => {
                 price={f.price}
                 isForRent={f.rent}
                 located={f.place}
+                landlord={f.landlord}
+                landlordRole={f.landlordRole}
                 id={String(i)}
               />
             ))}

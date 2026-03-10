@@ -3,15 +3,17 @@ import { FaHeart } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 
 
-const PropertyCard = ({ propImage, amenities, propTitle, price, isForRent, located, id, landlord }) => {
+const PropertyCard = ({ propImage, amenities, propTitle, price, isForRent, located, id, landlord, landlordRole }) => {
   const [favState, setFavState] = useState(false)
   const navigate = useNavigate()
 
   const handleDetails = () => {
     // navigate to details page and pass property data in state
-    const property = { propImage, amenities, propTitle, price, isForRent, located, id, landlord }
+    const property = { propImage, amenities, propTitle, price, isForRent, located, id, landlord, landlordRole }
     navigate(`/dashboard/properties/${id ?? ''}`, { state: { property } })
   }
+
+  const imageSrc = propImage || 'https://images.unsplash.com/photo-1560185127-6d5fb2c267f0?auto=format&fit=crop&w=1200&q=80'
 
   return (
     <div
@@ -20,7 +22,7 @@ const PropertyCard = ({ propImage, amenities, propTitle, price, isForRent, locat
     >
       <div className="relative overflow-hidden">
         <img
-          src={propImage}
+          src={imageSrc}
           alt={propTitle}
           className="h-56 w-full object-cover transition duration-300 group-hover:scale-105"
         />
@@ -47,7 +49,7 @@ const PropertyCard = ({ propImage, amenities, propTitle, price, isForRent, locat
           <div className="min-w-0">
             <h3 className="truncate text-lg font-semibold text-slate-900">{propTitle}</h3>
             <p className="truncate text-sm text-slate-500">{located}</p>
-            <p className="text-xs text-slate-400">Listed by {landlord}</p>
+            <p className="text-xs text-slate-400">Listed by {landlord}{landlordRole ? ` - ${landlordRole}` : ''}</p>
           </div>
           <p className="whitespace-nowrap text-lg font-bold text-violet-700">
             {price.toLocaleString()} <span className="text-sm font-normal text-slate-500">{isForRent ? 'Fcfa/mo' : 'Fcfa'}</span>
